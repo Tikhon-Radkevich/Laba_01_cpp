@@ -1,13 +1,13 @@
 #include <iostream>
 #include <fstream>
-#include "employee.h" // Include the employee struct definition
+#include "employee.h"
 
 
 int main(int argc, char* argv[]) {
 
     if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <binary_file_name> <num_records> \n";
-        return 1; // Exit with an error code
+        std::cerr << "\nUsage: " << argv[0] << " <binary_file_name> <num_records> \n";
+        return 1;
     }
 
     const char* binaryFileName = argv[1];
@@ -15,20 +15,18 @@ int main(int argc, char* argv[]) {
 
     if (numRecords <= 0) {
         std::cerr << "Number of records must be a positive integer. \n";
-        return 1; // Exit with an error code
+        return 1;
     }
 
-    // Open the binary file for writing in binary mode
+    // Open the bin file for writing in binary mode
     std::ofstream binaryFile(binaryFileName, std::ios::binary);
 
     if (!binaryFile) {
-        std::cerr << "Error: Unable to open the binary file for writing. \n";
-        return 1; // Exit with an error code
+        std::cerr << "\nError: Unable to open the binary file for writing. \n";
+        return 1;
     }
 
     employee emp;
-
-    // Prompt the user to input data for each employee record
     for (int i = 0; i < numRecords; ++i) {
         std::cout << "\nEmployee #" << i + 1 << " details: \n";
         std::cout << "ID: ";
@@ -38,14 +36,12 @@ int main(int argc, char* argv[]) {
         std::cout << "Hours worked: ";
         std::cin >> emp.hours;
 
-        // Write the employee record to the binary file
         binaryFile.write(reinterpret_cast<const char*>(&emp), sizeof(emp));
     }
 
-    // Close the binary file
     binaryFile.close();
 
     std::cout << "\nBinary file '" << binaryFileName << "' created successfully with " << numRecords << " records. \n";
 
-    return 0; // Exit successfully
+    return 0;
 }

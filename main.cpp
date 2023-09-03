@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fstream>
-#include "employee.h" // Include the employee struct definition
+#include "employee.h"
 
 
 int main() {
@@ -46,7 +46,7 @@ int main() {
             std::ifstream binaryFile(binaryFileName, std::ios::binary);
             if (!binaryFile) {
                 std::cerr << "\nError: Unable to open the input binary file for reading.\n";
-                return 1; // Exit with an error code
+                return 1;
             }
 
             employee emp;
@@ -58,7 +58,7 @@ int main() {
                 std::cout << "Hours Worked: " << emp.hours << "\n";
                 std::cout << "------------------------\n";
             }
-            // Close the input binary file
+            
             binaryFile.close();
 
             } else {
@@ -82,12 +82,12 @@ int main() {
     pid_t reporterPid = fork();
 
     if (reporterPid == -1) {
-        std::cerr << "Error: Forking Reporter process failed. \n";
+        std::cerr << "\nError: Forking Reporter process failed. \n";
         return 1;
     } else if (reporterPid == 0) {
         // Child process (Reporter)
         execl("./Reporter", "./Reporter", binaryFileName, reportFileName, numRecordsStr, nullptr);
-        std::cerr << "Error: Failed to execute Reporter utility. \n";
+        std::cerr << "\nError: Failed to execute Reporter utility. \n";
         exit(1);
     } else {
         // Parent process (Main)
@@ -99,11 +99,11 @@ int main() {
             std::cout << "\nGenerated report: \n";
             execl("/bin/cat", "/bin/cat", reportFileName, nullptr);
         } else {
-            std::cerr << "Error: Reporter utility encountered an issue. \n";
+            std::cerr << "\nError: Reporter utility encountered an issue. \n";
             return 1;
         }
     }
     
     std::cout << "\n\n\n";
-    return 0; // Exit successfully
+    return 0;
 }
