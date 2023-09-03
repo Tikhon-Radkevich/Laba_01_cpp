@@ -2,13 +2,7 @@
 BSU cpp  laboratory work 01
 
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Лабораторная работа No1: Создание процессов</title>
-</head>
-<body>
+
     <h1>Лабораторная работа No1: Создание процессов</h1>
     
     <p><em>Белорусский государственный университет<br>
@@ -94,5 +88,3 @@ BSU cpp  laboratory work 01
     );
     </pre>
     <p>где второй параметр установить равным INFINITE, например WaitForSingleObject(hCreator, INFINITE); здесь hCreator – дескриптор процесса Creator.</p>
-</body>
-</html>
