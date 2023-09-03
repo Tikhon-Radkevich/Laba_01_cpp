@@ -59,6 +59,6 @@ DWORD WaitForSingleObject(
     DWORD dwMilliseconds // интервал ожидания в миллисекундах
 );
 ```
-где второй параметр установить равным INFINITE, например
+    где второй параметр установить равным INFINITE, например
     WaitForSingleObject(hCreator, INFINITE);
-здесь hCreator – дескриптор процесса Creator.
+    здесь hCreator – дескриптор процесса Creator.
