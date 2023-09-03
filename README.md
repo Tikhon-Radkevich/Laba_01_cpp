@@ -21,6 +21,7 @@ struct employee
     char name[10];      // имя сотрудника
     double hours;       // количество отработанных часов
 };
+```
 
 ### Утилита Reporter
 
@@ -62,3 +63,4 @@ DWORD WaitForSingleObject(
     HANDLE hHandle, // дескриптор объекта
     DWORD dwMilliseconds // интервал ожидания в миллисекундах
 );
+```
