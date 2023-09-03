@@ -60,5 +60,5 @@ DWORD WaitForSingleObject(
 );
 ```
 где второй параметр установить равным INFINITE, например
-WaitForSingleObject(hCreator, INFINITE);
+    WaitForSingleObject(hCreator, INFINITE);
 здесь hCreator – дескриптор процесса Creator.
