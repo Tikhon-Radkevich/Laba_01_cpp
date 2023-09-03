@@ -18,7 +18,6 @@ struct employee
     double hours;       // количество отработанных часов
 };
 ```
-
 ### Утилита Reporter
 
 Утилита Reporter создает текстовый файл, содержащий упорядоченный список сотрудников с начисленной заработной платой. Отчет формируется на основе бинарного файла, созданного программой Creator.
@@ -60,3 +59,6 @@ DWORD WaitForSingleObject(
     DWORD dwMilliseconds // интервал ожидания в миллисекундах
 );
 ```
+где второй параметр установить равным INFINITE, например
+WaitForSingleObject(hCreator, INFINITE);
+здесь hCreator – дескриптор процесса Creator.
