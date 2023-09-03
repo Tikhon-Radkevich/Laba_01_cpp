@@ -57,8 +57,9 @@ struct employee
 DWORD WaitForSingleObject(
     HANDLE hHandle, // дескриптор объекта
     DWORD dwMilliseconds // интервал ожидания в миллисекундах
+
+где второй параметр установить равным INFINITE, например
+    WaitForSingleObject(hCreator, INFINITE);
+здесь hCreator – дескриптор процесса Creator.
 );
 ```
-    где второй параметр установить равным INFINITE, например
-    WaitForSingleObject(hCreator, INFINITE);
-    здесь hCreator – дескриптор процесса Creator.
