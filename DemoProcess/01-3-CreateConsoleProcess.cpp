@@ -4,7 +4,7 @@
 
 int main()
 {
-	wchar_t lpszCommandLine[] = L"C:\\ConsoleProcess.exe p1 p2 p3";
+	wchar_t lpszCommandLine[] = L"ConsoleProcess.exe p1 p2 p3";
 
 	STARTUPINFO si;
 	PROCESS_INFORMATION piCom;

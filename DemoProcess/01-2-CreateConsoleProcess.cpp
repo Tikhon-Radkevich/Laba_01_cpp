@@ -4,7 +4,7 @@
 
 int main()
 {
-	wchar_t lpszAppName[] = L"C:\\ConsoleProcess.exe";
+	// LPCTSTR lpszAppName[] = ;
 
 	STARTUPINFO si;
 	PROCESS_INFORMATION piApp;
@@ -12,8 +12,7 @@ int main()
 	ZeroMemory(&si, sizeof(STARTUPINFO));
 	si.cb = sizeof(STARTUPINFO);
 
-	// ������� ����� ���������� �������
-	if (!CreateProcess(lpszAppName, NULL, NULL, NULL, FALSE,
+	if (!CreateProcess("01-1-ConsoleProcess.exe", NULL, NULL, NULL, FALSE,
 			CREATE_NEW_CONSOLE, NULL, NULL, &si, &piApp))
 	{
 		_cputs("The new process is not created.\n");
@@ -24,9 +23,7 @@ int main()
 	}
 
 	_cputs("The new process is created.\n");
-	// ���� ���������� ���������� �������
 	WaitForSingleObject(piApp.hProcess, INFINITE);
-	// ��������� ����������� ����� �������� � ������� ��������
 	CloseHandle(piApp.hThread);
 	CloseHandle(piApp.hProcess);
 

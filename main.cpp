@@ -2,108 +2,94 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include <windows.h>
 #include <fstream>
 #include "employee.h"
 
 
 int main() {
-    char binaryFileName[256] = "test_bin";
-    int numRecords = 2;
+    std::string binaryFileName;
+    int numRecords;
 
-    // Prompt the user for the name of the binary file and the number of records to create
-    // std::cout << "Enter the name of the binary file: ";
-    // std::cin.getline(binaryFileName, sizeof(binaryFileName));
+    std::cout << "\n\nEnter the name of the binary file: ";
+    std::getline(std::cin, binaryFileName);
 
-    // std::cout << "Enter the number of records to create: ";
-    // std::cin >> numRecords;
+    std::cout << "Enter the number of records to create: ";
+    std::cin >> numRecords;
+
+    std::string numRecordsStr = std::to_string(numRecords);
 
     // Launch the Creator utility as a separate process and wait for it to complete
-    char numRecordsStr[16];
-    snprintf(numRecordsStr, sizeof(numRecordsStr), "%d", numRecords);
+    std::string commandLine = "Creator.exe " + binaryFileName + " " + numRecordsStr;
+    
+    STARTUPINFO si;
+    PROCESS_INFORMATION piCreator;
 
-    pid_t creatorPid = fork();
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(STARTUPINFO);
 
-    if (creatorPid == -1) {
-        std::cerr << "\nError: Forking Creator process failed. \n";
+    if (!CreateProcess(NULL, const_cast<char*>(commandLine.c_str()), NULL, NULL, FALSE,
+        CREATE_NEW_CONSOLE, NULL, NULL, &si, &piCreator))
+    {
+        std::cerr << "Error: Failed to execute Creator utility." << std::endl;
         return 1;
-    } else if (creatorPid == 0) {
-        // Child process (Creator)
-        execl("./Creator", "./Creator", binaryFileName, numRecordsStr, nullptr);
-        std::cerr << "\nError: Failed to execute Creator utility. \n";
-        exit(1);
-    } else {
-        // Parent process (Main)
-        int creatorStatus;
-        waitpid(creatorPid, &creatorStatus, 0);
+    }
 
-        if (WIFEXITED(creatorStatus) && WEXITSTATUS(creatorStatus) == 0) {
-            // Creator utility completed successfully
-            std::cout << "Contents of the binary file: \n------------------------\n";
+    WaitForSingleObject(piCreator.hProcess, INFINITE);
+    CloseHandle(piCreator.hThread);
+    CloseHandle(piCreator.hProcess);
 
-            std::ifstream binaryFile(binaryFileName, std::ios::binary);
-            if (!binaryFile) {
-                std::cerr << "\nError: Unable to open the input binary file for reading.\n";
-                return 1;
-            }
+    std::cout << "\nContents of the binary file: \n------------------------\n";
 
-            employee emp;
-            // Read and print employee records from the binary file
-            while (binaryFile.read(reinterpret_cast<char*>(&emp), sizeof(emp))) {
-                // Print employee details
-                std::cout << "Employee ID: " << emp.num << "\n";
-                std::cout << "Employee Name: " << emp.name << "\n";
-                std::cout << "Hours Worked: " << emp.hours << "\n";
-                std::cout << "------------------------\n";
-            }
-            
-            binaryFile.close();
+    std::ifstream binaryFile(binaryFileName, std::ios::binary);
+    if (!binaryFile) {
+        std::cerr << "Error: Unable to open the input binary file for reading." << std::endl;
+        return 1;
+    }
+    
+    // Read and print employee records from the binary file
+    employee emp;
+    while (binaryFile.read(reinterpret_cast<char*>(&emp), sizeof(emp))) {
+        // Print employee details
+        std::cout << "Employee ID: " << emp.num << "\n";
+        std::cout << "Employee Name: " << emp.name << "\n";
+        std::cout << "Hours Worked: " << emp.hours << "\n";
+        std::cout << "------------------------\n";
+    }
+    binaryFile.close();
 
-            } else {
-                std::cerr << "\nError: Creator utility encountered an issue. \n";
-                return 1;
-            }
-        }
-
-    char reportFileName[256];
+    std::string reportFileName;
     double hourlyWage;
 
     // Prompt the user for the name of the report file and the hourly wage
     std::cout << "\nEnter the name of the report file: ";
-    std::cin.ignore(); // Clear the newline character from the previous input
-    std::cin.getline(reportFileName, sizeof(reportFileName));
+    std::cin.ignore();
+    std::getline(std::cin, reportFileName);
 
-    std::cout << "Enter the hourly wage: ";
+    std::cout << "\nEnter the hourly wage: ";
     std::cin >> hourlyWage;
+    std::string hourlyWage_str = std::to_string(hourlyWage);
 
-    // Launch the Reporter utility as a separate process and wait for it to complete
-    pid_t reporterPid = fork();
+    // Build the command line for launching the Reporter utility
+    commandLine = "Reporter.exe " + binaryFileName + " " + reportFileName + " " + hourlyWage_str;
 
-    if (reporterPid == -1) {
-        std::cerr << "\nError: Forking Reporter process failed. \n";
-        return 1;
-    } else if (reporterPid == 0) {
-        // Child process (Reporter)
-        execl("./Reporter", "./Reporter", binaryFileName, reportFileName, numRecordsStr, nullptr);
+    // Create a process to run the Reporter utility
+    PROCESS_INFORMATION piReporter;
+
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(STARTUPINFO);
+
+    if (!CreateProcess(NULL, const_cast<char*>(commandLine.c_str()), NULL, NULL, FALSE, 
+        0, NULL, NULL, &si, &piReporter)) {
         std::cerr << "\nError: Failed to execute Reporter utility. \n";
-        exit(1);
-    } else {
-        // Parent process (Main)
-        int reporterStatus;
-        waitpid(reporterPid, &reporterStatus, 0);
-
-        if (WIFEXITED(reporterStatus) && WEXITSTATUS(reporterStatus) == 0) {
-            // Reporter utility completed successfully
-            std::cout << "\nGenerated report: \n";
-            execl("/bin/cat", "/bin/cat", reportFileName, nullptr);
-        } else {
-            std::cerr << "\nError: Reporter utility encountered an issue. \n";
-            return 1;
-        }
+        return 1;
     }
-    
-    std::cout << "\n\n\n";
+
+    WaitForSingleObject(piReporter.hProcess, INFINITE);
+    CloseHandle(piReporter.hThread);
+    CloseHandle(piReporter.hProcess);
+
+    std::cout << "\n\n";
+
     return 0;
 }
